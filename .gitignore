@@ -1,0 +1,5 @@
+/.idea/*
+!/.idea/copyright
+!/.idea/codeStyles
+/node_modules
+/lib
