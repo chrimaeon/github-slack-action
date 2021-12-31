@@ -4,9 +4,16 @@ inputs:
   slack_token:
     description: The O-Auth token from the GitHub App that sends the message
     required: true
-  body:
-    description: The release notes to use (can be markdown)
+  channel:
+    description: The channel to post into
+    required: true
+  text:
+    description: the text to show
+    required: true
+  blocks:
+    description: the Slack Blocks-Kit part of the messsage (https://api.slack.com/block-kit)
     required: false
+
 runs:
   using: node16
   main: "dist/index.js"
