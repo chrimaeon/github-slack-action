@@ -62,7 +62,10 @@ async function run() {
             text,
             blocks: blocks ? JSON.parse(blocks) : null,
         });
-        console.log(response);
+        const warnings = response.response_metadata?.warnings;
+        if (warnings) {
+            warnings.forEach((warning) => core.warning(warning));
+        }
         if (!response.ok) {
             core.setFailed(response.error || 'error posting slack message');
         }
