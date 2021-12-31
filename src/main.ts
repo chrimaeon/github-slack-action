@@ -38,8 +38,6 @@ async function run(): Promise<void> {
       blocks: blocks ? JSON.parse(blocks) : null,
     })
 
-    console.log(response)
-
     if (!response.ok) {
       core.setFailed(response.error || 'error posting slack message')
     }
