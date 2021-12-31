@@ -1,0 +1,41 @@
+name: Create Github Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  create-github-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: chrimaeon/github-create-release-action@0.2.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ github.ref }}
+      - name: Notify Slack
+        uses: chrimaeon/github-slack-action@0.1.0
+        with:
+          channel: ${{ secrets.SLACK_CHANNEL }}
+          token: ${{ secrets.SLACK_TOKEN }}
+          text: "New draft release for $GITHUB_REPOSITORY"
+          body: |
+            [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "New draft release for $GITHUB_REPOSITORY"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*URL*\n${{ steps.create_release.outputs.html_url }}"
+                }
+              }
+            ]
