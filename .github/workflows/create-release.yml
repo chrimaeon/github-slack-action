@@ -19,16 +19,16 @@ jobs:
       - name: Notify Slack
         uses: chrimaeon/github-slack-action@0.1.0
         with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
           channel: ${{ secrets.SLACK_CHANNEL }}
-          token: ${{ secrets.SLACK_TOKEN }}
-          text: "New draft release for $GITHUB_REPOSITORY"
-          body: |
+          text: "New draft release for ${{ github.repository }}"
+          blocks: |
             [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "New draft release for $GITHUB_REPOSITORY"
+                  "text": "New draft release for ${{ github.repository }}"
                 }
               },
               {
