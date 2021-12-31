@@ -38,6 +38,11 @@ async function run(): Promise<void> {
       blocks: blocks ? JSON.parse(blocks) : null,
     })
 
+    const warnings = response.response_metadata?.warnings
+    if (warnings) {
+      warnings.forEach((warning) => core.warning(warning))
+    }
+
     if (!response.ok) {
       core.setFailed(response.error || 'error posting slack message')
     }
