@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack
-        uses: chrimaeon/github-slack-action@0.3.0
+        uses: chrimaeon/github-slack-action@1
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel: ${{ secrets.SLACK_CHANNEL }}
