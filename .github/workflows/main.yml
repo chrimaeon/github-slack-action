@@ -22,6 +22,8 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+      - name: Lint
+        run: yarn lint:check
       - name: Test
         run: yarn test --coverage
       - name: Upload coverage to Codecov
