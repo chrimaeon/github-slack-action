@@ -42,6 +42,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
+const send_message_1 = __nccwpck_require__(3042);
 const web_api_1 = __nccwpck_require__(431);
 var ActionInputs;
 (function (ActionInputs) {
@@ -51,30 +52,80 @@ var ActionInputs;
     ActionInputs["BLOCKS"] = "blocks";
 })(ActionInputs || (ActionInputs = {}));
 async function run() {
+    const token = core.getInput(ActionInputs.SLACK_TOKEN, { required: true });
+    const channel = core.getInput(ActionInputs.CHANNEL, { required: true });
+    const text = core.getInput(ActionInputs.TEXT, { required: true });
+    const blocks = core.getInput(ActionInputs.BLOCKS);
     try {
-        const token = core.getInput(ActionInputs.SLACK_TOKEN, { required: true });
-        const channel = core.getInput(ActionInputs.CHANNEL, { required: true });
-        const text = core.getInput(ActionInputs.TEXT, { required: true });
-        const blocks = core.getInput(ActionInputs.BLOCKS);
         const client = new web_api_1.WebClient(token);
-        const response = await client.chat.postMessage({
-            channel,
-            text,
-            blocks: blocks ? JSON.parse(blocks) : null,
-        });
-        const warnings = response.response_metadata?.warnings;
-        if (warnings) {
-            warnings.forEach((warning) => core.warning(warning));
-        }
-        if (!response.ok) {
-            core.setFailed(response.error || 'error posting slack message');
-        }
+        await (0, send_message_1.sendMessage)(client, channel, text, blocks);
     }
     catch (e) {
         core.setFailed(e);
     }
 }
 run();
+
+
+/***/ }),
+
+/***/ 3042:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+/*
+ * Copyright (c) 2022. Christian Grach <christian.grach@cmgapps.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.sendMessage = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+async function sendMessage(client, channel, text, blocks) {
+    const response = await client.chat.postMessage({
+        channel,
+        text,
+        blocks: blocks ? JSON.parse(blocks) : null,
+    });
+    const warnings = response.response_metadata?.warnings;
+    if (warnings) {
+        warnings.forEach((warning) => core.warning(warning));
+    }
+    if (!response.ok) {
+        throw Error(response.error);
+    }
+}
+exports.sendMessage = sendMessage;
 
 
 /***/ }),
