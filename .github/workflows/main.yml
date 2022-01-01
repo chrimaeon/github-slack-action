@@ -14,14 +14,10 @@ jobs:
         id: nvmrc
         run: echo "::set-output name=version:$(cat .nvmrc)"
       - name: Setup Node.js (.nvmrc)
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: "${{ steps.nvmrc.outputs.version }}"
-      - name: Cache node-modules
-        uses: actions/cache@v1
-        with:
-          key: node-modules-${{ hashFiles('**/yarn.lock') }}
-          path: "**/node_modules"
+          cache: yarn
       - name: Install modules
         run: yarn install
       - name: Build
@@ -29,4 +25,4 @@ jobs:
       - name: Test
         run: yarn test --coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
