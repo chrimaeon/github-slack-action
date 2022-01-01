@@ -1,1 +1,63 @@
-# github-slack-action
+# GitHub Slack Message Action
+
+This action sends a message to a Slack channel
+
+## Inputs
+
+### `slack_token`:
+**Required**
+
+The OAuth token from your [Slack App]
+
+### `channel`:
+**Required**
+
+The channel to post into
+
+### `text`:
+**Required**
+
+The text to send
+
+### `blocks`:
+
+The Slack Blocks-Kit part of the message (https://api.slack.com/block-kit)
+
+## Example usage
+
+```yaml
+name: Send Slack Message
+
+on:
+  workflow-dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        uses: chrimaeon/github-slack-action@0.2.0
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel: ${{ secrets.SLACK_CHANNEL }}
+          text: "The is my first message, yay!"
+          blocks: |
+            [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Hello World!"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "from **Github Slack Action**!"
+                }
+              }
+            ]
+```
+
+[Slack App]: https://slack.com/apps

@@ -8,12 +8,11 @@ inputs:
     description: The channel to post into
     required: true
   text:
-    description: the text to show
+    description: The text to send
     required: true
   blocks:
-    description: the Slack Blocks-Kit part of the messsage (https://api.slack.com/block-kit)
+    description: The Slack Blocks-Kit part of the message (https://api.slack.com/block-kit)
     required: false
-
 runs:
   using: node16
   main: "dist/index.js"
