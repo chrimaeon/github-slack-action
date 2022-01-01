@@ -1,0 +1,32 @@
+name: Build & Test
+
+on:
+  push:
+
+jobs:
+  build-and-test:
+    runs-on:
+      ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Load .nvmrc
+        id: nvmrc
+        run: echo "::set-output name=version:$(cat .nvmrc)"
+      - name: Setup Node.js (.nvmrc)
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.nvmrc.outputs.version }}"
+      - name: Cache node-modules
+        uses: actions/cache@v1
+        with:
+          key: node-modules-${{ hashFiles('**/yarn.lock') }}
+          path: "**/node_modules"
+      - name: Install modules
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Test
+        run: yarn test --coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1

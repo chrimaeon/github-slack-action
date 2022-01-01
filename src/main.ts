@@ -15,7 +15,8 @@
  */
 
 import * as core from '@actions/core'
-import { ChatPostMessageResponse, WebClient } from '@slack/web-api'
+import { sendMessage } from './send_message'
+import { WebClient } from '@slack/web-api'
 
 enum ActionInputs {
   SLACK_TOKEN = 'slack_token',
@@ -24,28 +25,15 @@ enum ActionInputs {
   BLOCKS = 'blocks',
 }
 
-async function run(): Promise<void> {
+async function run() {
+  const token = core.getInput(ActionInputs.SLACK_TOKEN, { required: true })
+  const channel = core.getInput(ActionInputs.CHANNEL, { required: true })
+  const text = core.getInput(ActionInputs.TEXT, { required: true })
+  const blocks = core.getInput(ActionInputs.BLOCKS)
+
   try {
-    const token = core.getInput(ActionInputs.SLACK_TOKEN, { required: true })
-    const channel = core.getInput(ActionInputs.CHANNEL, { required: true })
-    const text = core.getInput(ActionInputs.TEXT, { required: true })
-    const blocks = core.getInput(ActionInputs.BLOCKS)
-
     const client = new WebClient(token)
-    const response: ChatPostMessageResponse = await client.chat.postMessage({
-      channel,
-      text,
-      blocks: blocks ? JSON.parse(blocks) : null,
-    })
-
-    const warnings = response.response_metadata?.warnings
-    if (warnings) {
-      warnings.forEach((warning) => core.warning(warning))
-    }
-
-    if (!response.ok) {
-      core.setFailed(response.error || 'error posting slack message')
-    }
+    await sendMessage(client, channel, text, blocks)
   } catch (e) {
     core.setFailed(e as Error)
   }

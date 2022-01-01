@@ -1,5 +1,8 @@
 # GitHub Slack Message Action
 
+[![Build & Test](https://github.com/chrimaeon/github-slack-action/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/github-slack-action/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/chrimaeon/github-slack-action/branch/main/graph/badge.svg?token=WNLO6DSWNC)](https://codecov.io/gh/chrimaeon/github-slack-action)
+
 This action sends a message to a Slack channel
 
 ## Inputs

@@ -11,13 +11,15 @@
     "clean": "rm -r dist lib",
     "package": "yarn build && ncc build --source-map --license licenses.txt",
     "lint:check": "eslint './src/**/*.ts'",
-    "lint:fix": "eslint --fix './src/**/*.ts'"
+    "lint:fix": "eslint --fix './src/**/*.ts'",
+    "test": "jest"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@slack/web-api": "^6.5.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.0",
     "@types/node": "16",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
@@ -25,7 +27,9 @@
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.5",
     "prettier": "^2.5.1",
+    "ts-jest": "^27.1.2",
     "typescript": "^4.5.4"
   }
 }
