@@ -18,43 +18,33 @@
 
 import { sendMessage } from './send_message'
 import { ChatPostMessageResponse } from '@slack/web-api'
-import Mock = jest.Mock
+import * as core from '@actions/core'
+
+jest.mock('@actions/core')
 
 describe('main', () => {
   let client: any
-  let postMessage: Mock
+  let postMessage: jest.Mock
 
-  beforeEach(() => {
-    postMessage = jest.fn<ChatPostMessageResponse, void[]>(() => ({
-      ok: true,
-    }))
-    client = {
-      chat: {
-        postMessage,
-      },
-    }
-  })
-
-  it('should send message', async () => {
-    await sendMessage(client, 'channel', 'this is the text')
-    expect(client.chat.postMessage).toBeCalledWith({ blocks: null, channel: 'channel', text: 'this is the text' })
-  })
-
-  it('should send message with blocks', async () => {
-    const blocks = [
-      {
-        type: 'header',
-        text: {
-          type: 'plain_text',
-          text: 'New draft release for ${{ github.repository }}',
+  describe('success path', () => {
+    beforeEach(() => {
+      postMessage = jest.fn<ChatPostMessageResponse, void[]>(() => ({
+        ok: true,
+      }))
+      client = {
+        chat: {
+          postMessage,
         },
-      },
-    ]
-    await sendMessage(
-      client,
-      'channel',
-      'this is the text',
-      JSON.stringify([
+      }
+    })
+
+    it('should send message', async () => {
+      await sendMessage(client, 'channel', 'this is the text')
+      expect(client.chat.postMessage).toBeCalledWith({ blocks: null, channel: 'channel', text: 'this is the text' })
+    })
+
+    it('should send message with blocks', async () => {
+      const blocks = [
         {
           type: 'header',
           text: {
@@ -62,29 +52,57 @@ describe('main', () => {
             text: 'New draft release for ${{ github.repository }}',
           },
         },
-      ]),
-    )
-    expect(postMessage).toBeCalledWith({ blocks: blocks, channel: 'channel', text: 'this is the text' })
+      ]
+      await sendMessage(client, 'channel', 'this is the text', JSON.stringify(blocks))
+      expect(postMessage).toBeCalledWith({ blocks: blocks, channel: 'channel', text: 'this is the text' })
+    })
   })
 
-  it('should throw if response not ok', async () => {
-    postMessage.mockResolvedValue({ ok: false })
+  describe('error path', () => {
+    beforeEach(() => {
+      postMessage = jest.fn<ChatPostMessageResponse, void[]>(() => ({
+        ok: false,
+        response_metadata: {
+          warnings: ['this is a warning', 'and another warning'],
+        },
+      }))
+      client = {
+        chat: {
+          postMessage,
+        },
+      }
+    })
 
-    await expect(
-      sendMessage(
-        client,
-        'channel',
-        'this is the text',
-        JSON.stringify([
-          {
-            type: 'header',
-            text: {
-              type: 'plain_text',
-              text: 'New draft release for ${{ github.repository }}',
+    it('should log warnings', async () => {
+      try {
+        await sendMessage(client, 'channel', 'this is the text')
+        expect(core.warning).toBeCalledTimes(2)
+        expect(core.warning).toBeCalledWith('this is a warning')
+        expect(core.warning).toBeCalledWith('and another warning')
+      } catch (e) {
+        // ignore
+      }
+    })
+
+    it('should throw if response not ok', async () => {
+      postMessage.mockResolvedValue({ ok: false })
+
+      await expect(
+        sendMessage(
+          client,
+          'channel',
+          'this is the text',
+          JSON.stringify([
+            {
+              type: 'header',
+              text: {
+                type: 'plain_text',
+                text: 'New draft release for ${{ github.repository }}',
+              },
             },
-          },
-        ]),
-      ),
-    ).rejects.toThrow()
+          ]),
+        ),
+      ).rejects.toThrow()
+    })
   })
 })
