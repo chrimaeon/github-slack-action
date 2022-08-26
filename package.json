@@ -1,6 +1,6 @@
 {
   "name": "github-create-release-action",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create a Github Release from a git tag",
   "repository": "git@github.com:chrimaeon/github-create-release-action.git",
   "author": "Christian Grach <christian.grach@cmgapps.com>",
