@@ -9,14 +9,11 @@ jobs:
       ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Load .nvmrc
-        id: nvmrc
-        run: echo "version=$(cat .nvmrc)" >> GITHUB_OUTPUT
+      - uses: actions/checkout@v4
       - name: Setup Node.js (.nvmrc)
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "${{ steps.nvmrc.outputs.version }}"
+          node-version-file: ".nvmrc"
           cache: yarn
       - name: Install modules
         run: yarn install
@@ -27,4 +24,4 @@ jobs:
       - name: Test
         run: yarn test --coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
