@@ -14,7 +14,7 @@ inputs:
     description: The Slack Blocks-Kit part of the message (https://api.slack.com/block-kit)
     required: false
 runs:
-  using: node16
+  using: node20
   main: "dist/index.js"
 branding:
   color: blue

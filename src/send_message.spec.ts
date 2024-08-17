@@ -40,7 +40,11 @@ describe('main', () => {
 
     it('should send message', async () => {
       await sendMessage(client, 'channel', 'this is the text')
-      expect(client.chat.postMessage).toBeCalledWith({ blocks: null, channel: 'channel', text: 'this is the text' })
+      expect(client.chat.postMessage).toHaveBeenCalledWith({
+        blocks: null,
+        channel: 'channel',
+        text: 'this is the text',
+      })
     })
 
     it('should send message with blocks', async () => {
@@ -54,7 +58,7 @@ describe('main', () => {
         },
       ]
       await sendMessage(client, 'channel', 'this is the text', JSON.stringify(blocks))
-      expect(postMessage).toBeCalledWith({ blocks: blocks, channel: 'channel', text: 'this is the text' })
+      expect(postMessage).toHaveBeenCalledWith({ blocks: blocks, channel: 'channel', text: 'this is the text' })
     })
   })
 
@@ -76,10 +80,11 @@ describe('main', () => {
     it('should log warnings', async () => {
       try {
         await sendMessage(client, 'channel', 'this is the text')
-        expect(core.warning).toBeCalledTimes(2)
-        expect(core.warning).toBeCalledWith('this is a warning')
-        expect(core.warning).toBeCalledWith('and another warning')
+        expect(core.warning).toHaveBeenCalledTimes(2)
+        expect(core.warning).toHaveBeenCalledWith('this is a warning')
+        expect(core.warning).toHaveBeenCalledWith('and another warning')
       } catch (e) {
+        console.log(`expected error: ${e}`)
         // ignore
       }
     })
